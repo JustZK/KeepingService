@@ -3,15 +3,20 @@ package com.example.zk.service;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.example.zk.keepingservice.MainActivity;
 import com.example.zk.keepingservice.R;
 
 public class MainService extends Service {
+    private MServiceConnection mServiceConnection;
 
     public MainService() {
     }
@@ -30,13 +35,14 @@ public class MainService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        mServiceConnection = new MServiceConnection();
         startForeground();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
+        bindService(new Intent(this, KeepingService.class), mServiceConnection, Context.BIND_IMPORTANT);
         /**
          * 方法2、在service的onStartCommand方法里返回 START_STICKY
          * 主要的几个返回值：
@@ -117,5 +123,26 @@ public class MainService extends Service {
                 currSong, pendingIntent);
         */
         startForeground(1, notification);
+    }
+
+    /**
+     * 方法6、服务互相绑定（双进程互相守护）
+     */
+    class MServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            // 连接出现了异常断开了，被杀掉了
+            Toast.makeText(MainService.this, "KeepingService被干掉", Toast.LENGTH_SHORT).show();
+            startService(new Intent(MainService.this, KeepingService.class));
+            bindService(new Intent(MainService.this, KeepingService.class),
+                    mServiceConnection, Context.BIND_IMPORTANT);
+        }
+
     }
 }
