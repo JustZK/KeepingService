@@ -21,7 +21,7 @@
 * AlarmManager周期性来检查进程状态（关机或重启之后会失效）
 
 * 5.0以后的Android系统，我们就可以使用的JobScheduler，JobScheduler来可以调度特殊场景下启动JobService来执行onStartJob，如设定无线连接时候啊，JobService是Android5.0以后新增的一个服务，即可以通过的JobScheduler来执行一些满足特定条件但不紧急的后台任务
-按照官方文档的定义，在原生的Android系统上，当设定了一个Job之后，哪怕该App的进程已经结束或者被杀掉，对应的JobService也是可以启动的。
+\<br> 按照官方文档的定义，在原生的Android系统上，当设定了一个Job之后，哪怕该App的进程已经结束或者被杀掉，对应的JobService也是可以启动的。
 然而Android已经被国内的各大厂商重新定制过，导致的一个问题就是当前App的进程被杀掉之后，JobService无法启动。
 例如在MIUI系统中，第三方App如果没有被用户设置到允许自启动的名单中，在启动Service的时候会被拦截掉。
 这恐怕会导致很多第三方应用无法使用这个东西，正如之前的AlarmManager一样。
