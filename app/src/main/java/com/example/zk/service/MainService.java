@@ -1,5 +1,6 @@
 package com.example.zk.service;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,6 +17,8 @@ import com.example.zk.keepingservice.MainActivity;
 import com.example.zk.keepingservice.R;
 
 public class MainService extends Service {
+    public static final String SERVICE_KEEP_ALARM = "com.example.zk.service.MainService.AlarmManager";
+
     private MServiceConnection mServiceConnection;
 
     public MainService() {
@@ -37,6 +40,26 @@ public class MainService extends Service {
         super.onCreate();
         mServiceConnection = new MServiceConnection();
         startForeground();
+        setAlarmManager();
+    }
+
+    private void setAlarmManager(){
+        AlarmManager alarmManager=(AlarmManager)getSystemService(Service.ALARM_SERVICE);
+        Intent intent = new Intent(SERVICE_KEEP_ALARM);
+        sendBroadcast(intent);
+        /**
+         * 获取PendingIntent对象
+         *
+         * requestCode 参数用来区分不同的PendingIntent对象
+         * flag 参数常用的有4个值：
+         *      FLAG_CANCEL_CURRENT 当需要获取的PendingIntent对象已经存在时，先取消当前的对象，再获取新的；
+         *      FLAG_ONE_SHOT 获取的PendingIntent对象只能使用一次，再次使用需要重新获取
+         *      FLAG_NO_CREATE 如果获取的PendingIntent对象不存在，则返回null
+         *      FLAG_UPDATE_CURRENT 如果希望获取的PendingIntent对象与已经存在的PendingIntent对象相比，如果只是Intent附加的数据不
+         *      同，那么当前存在的PendingIntent对象不会被取消，而是重新加载新的Intent附加的数据
+         */
+        PendingIntent pi=PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 1000,   60 * 1000, pi);
     }
 
     @Override

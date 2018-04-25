@@ -143,6 +143,9 @@
                 <action android:name="android.intent.action.UMS_DISCONNECTED" />
                 <!--解锁进入系统-->
                 <action android:name="android.intent.action.USER_PRESENT" />
+                <!--自定义的AlarmManager广播-->
+                <action android:name="com.example.zk.service.MainService.AlarmManager" />
+
             </intent-filter>
         </receiver>
 

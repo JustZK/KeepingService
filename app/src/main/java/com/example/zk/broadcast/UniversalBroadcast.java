@@ -245,6 +245,9 @@ public class UniversalBroadcast extends BroadcastReceiver {
             case Intent.ACTION_WALLPAPER_CHANGED:
                 lowBatteryNotificationShow(context, 56, "设备墙纸已改变时发出的广播");
                 break;
+            case MainService.SERVICE_KEEP_ALARM:
+                lowBatteryNotificationShow(context, 57, "收到AlarmManager定时发出的广播");
+                break;
             default:
                 break;
         }
