@@ -1,20 +1,28 @@
 package com.example.zk.keepingservice;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.example.zk.provider.AccountProvider;
 import com.example.zk.service.KeepingService;
 import com.example.zk.service.MainJobService;
 import com.example.zk.service.MainService;
 
 public class MainActivity extends AppCompatActivity {
+    // TYPE必须与account_preferences.xml中的TYPE保持一致
+    public static final String ACCOUNT_TYPE ="com.example.zk.service.AuthenticationService";
+    private AccountManager mAccountManager;
     private Context mContext;
     private int jobId;
 
@@ -34,6 +42,26 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             scheduleJob();
         }
+
+        Account account = new Account(getString(R.string.app_name),ACCOUNT_TYPE);
+        mAccountManager = (AccountManager)getSystemService(ACCOUNT_SERVICE);
+        // 获取系统帐户列表中已添加的帐户是否存在我们的帐户，用TYPE做为标识
+        Account[] accounts =mAccountManager.getAccountsByType(ACCOUNT_TYPE);
+        if(accounts.length > 0) {
+//            Toast.makeText(this, "已添加当前登录的帐户",Toast.LENGTH_SHORT).show();
+        } else {
+            mAccountManager.addAccountExplicitly(account, null, null);
+        }
+
+        // 自动同步
+        Bundle bundle= new Bundle();
+        ContentResolver.setIsSyncable(account, AccountProvider.AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(account, AccountProvider.AUTHORITY,true);
+        // 间隔时间为2分钟，最低好像是一分钟
+        ContentResolver.addPeriodicSync(account, AccountProvider.AUTHORITY,bundle, 2 * 60);
+        // 手动同步
+        //ContentResolver.requestSync(account, AccountProvider.AUTHORITY, bundle);
+
     }
 
 

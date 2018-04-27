@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import com.example.zk.keepingservice.R;
 import com.example.zk.service.MainJobService;
 import com.example.zk.service.MainService;
+import com.example.zk.service.SyncService;
 
 import java.util.List;
 
@@ -251,6 +252,9 @@ public class UniversalBroadcast extends BroadcastReceiver {
                 break;
             case MainJobService.SERVICE_KEEP_JOB_SERVICE:
                 lowBatteryNotificationShow(context, 58, "收到JobService定时发出的广播");
+                break;
+            case SyncService.SERVICE_KEEP_SYNC_SERVICE:
+                lowBatteryNotificationShow(context, 59, "收到android账户同步时发出的广播");
                 break;
             default:
                 break;
